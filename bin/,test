@@ -1,0 +1,11 @@
+#!/bin/zsh
+if [ -z $REPO_BASE ]; then
+  SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]:-${(%):-%x}}")")
+  export REPO_BASE=$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null)
+  source "$REPO_BASE/bin/repo-settings.sh"
+fi
+
+
+typeset -A instances=()
+list_instances instances
+data_menu instances

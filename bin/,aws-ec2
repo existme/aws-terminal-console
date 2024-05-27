@@ -1,0 +1,90 @@
+#!/bin/env zsh
+
+# The following works for both bash and zsh
+if [ -z $REPO_BASE ]; then
+  SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]:-${(%):-%x}}")")
+  export REPO_BASE=$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null)
+  source "$REPO_BASE/bin/repo-settings.sh"
+fi
+
+# Initialize generated_menu own variables
+instance_id=''
+action=''
+verbose='false'
+
+# Function to display usage
+usage() {
+    echo "Usage: $0 [-i instance_id] [-a action] [-v verbose]"
+    echo
+    echo "Options:"
+    echo "  -i    Specify the instance ID."
+    echo "  -a    Specify the action (start, stop, describe)."
+    echo "  -v    Enable verbose mode."
+    echo "  -h    Display this help message."
+    echo
+    echo "Example:"
+    echo "  $0 -i i-0abcd1234efgh5678 -a start"
+}
+
+# generate documentation for getopts
+# https://stackoverflow.com/questions/7069682/how-to-get-arguments-with-flags-in-bash
+# Parse options
+while getopts ":i:a:vh" opt; do
+  case ${opt} in
+    i) instance_id=$OPTARG;;
+    a) action=$OPTARG;;
+    v) verbose='true';;
+    h) usage; exit 0;;
+    \?) echo "Invalid option: -$OPTARG" 1>&2; usage; exit 1;;
+    :) echo "Option -$OPTARG requires an argument." 1>&2; usage; exit 1;;
+  esac
+done
+shift $((OPTIND -1))
+
+# Rest of your script...
+# Use the instance_id and action variables in your script
+if [ -z "$instance_id" ]; then
+  typeset -A instances=()
+  list_instances instances
+  instance_id=$(data_menu instances)
+  if [ -z "$instance_id" ]; then
+    echo "No instance selected. Exiting."
+    exit 1
+  fi
+fi
+instance_specs=$(describe_instance $instance_id)
+
+if [ -z "${action}" ]; then
+  menu_prompt="Choose action"
+  export menu_title_desc=$(format_instance $instance_specs)
+  typeset -A instance_menu=()
+  generate_ec2_menus instance_menu $instance_specs
+  action=$(data_menu instance_menu|tr -d '"')
+fi
+
+case "$action" in
+  "start")
+    echo "Starting $instance_id"
+    start_stop_instance "$instance_id" "running" "$instance_specs"
+    ;;
+  "stop")
+    start_stop_instance "$instance_id" "stopped" "$instance_specs"
+    echo "Stopping $instance_id"
+    ;;
+  "jupyter")
+    echo "Portforwarding Jupyter on $instance_id"
+    echo "Jupyter will be available at http://localhost:23000"
+    aws ssm start-session --target $instance_id --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["8888"], "localPortNumber":["23000"]}'
+    ;;
+  "describe")
+    echo "Describing $instance_id"
+    aws ec2 describe-instances --instance-ids $instance_id | lnav
+    ;;
+  "")
+    echo "No action selected. Exiting."
+    ;;
+  *)
+    echo "Invalid action: $action"
+    exit 1
+    ;;
+esac
