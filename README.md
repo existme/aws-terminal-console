@@ -6,6 +6,9 @@
 <a href="https://aws.amazon.com/ec2/">
 <img alt="ec2" src="https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazonec2"/></a>
 
+<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html">
+<img alt="ssm" src="https://img.shields.io/badge/AWS-SSM-FF9900?logo=amazon"/></a>
+
 <a href="https://aws.amazon.com/s3/">
 <img alt="s3" src="https://img.shields.io/badge/AWS-S3-569A31?logo=amazons3"/></a>
 
@@ -14,11 +17,20 @@
 <a href="https://www.gnu.org/software/bash/">
 <img alt="bash" src="https://img.shields.io/badge/Made_with-bash-1f425f.svg"/></a>
 
+<a href="https://www.zsh.org/">
+<img alt="bash" src="https://img.shields.io/badge/Made_with-zsh-1f425f.svg"/></a>
+
 <a href="https://github.com/davatorium/rofi">
 <img alt="rofi" src="https://img.shields.io/badge/uses-rofi-red.svg"/>
 </a>
 <a href="https://github.com/stilvoid/dmenu">
-<img alt="rofi" src="https://img.shields.io/badge/uses-dmenu-red.svg"/>
+<img alt="dmenu" src="https://img.shields.io/badge/uses-dmenu-red.svg"/>
+</a>
+<a href="https://github.com/jqlang/jq">
+<img alt="jq" src="https://img.shields.io/badge/uses-jq-red.svg"/>
+</a>
+<a href="https://lnav.org/">
+<img alt="lnav" src="https://img.shields.io/badge/uses-lnav-red.svg"/>
 </a>
 
 <a href="https://ubuntu.com/">
