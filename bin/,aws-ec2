@@ -76,6 +76,10 @@ case "$action" in
     echo "Jupyter will be available at http://localhost:23000"
     aws ssm start-session --target $instance_id --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["8888"], "localPortNumber":["23000"]}'
     ;;
+  "ssh")
+    echo "SSH into $instance_id"
+    aws ssm start-session --target $instance_id
+    ;;
   "describe")
     echo "Describing $instance_id"
     aws ec2 describe-instances --instance-ids $instance_id | lnav

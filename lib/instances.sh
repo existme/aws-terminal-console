@@ -56,6 +56,7 @@ generate_ec2_menus() {
     the_menu["start"]="<span foreground='green'><b>Start</b></span> the instance"
   elif [[ "$instance_state" == "running" ]]; then
     the_menu["stop"]="<span foreground='red'><b>Stop</b></span> the instance"
+    the_menu["ssh"]="<span foreground='yellow'><b>SSH</b></span> into the instance"
   fi
   the_menu["describe"]="<b>Describe</b> the instance"
   the_menu["jupyter"]='<b>Portforward</b> jupyter to localhost:23000'
