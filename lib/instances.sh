@@ -19,7 +19,7 @@ list_instances() {
 # Describes the instance with the given instance id
 describe_instance(){
     local instance_id=$1
-    aws ec2 describe-instances --instance-ids $instance_id
+    aws ec2 describe-instances --instance-ids $instance_id --no-cli-pager
 }
 
 # Formats the instance details for display
@@ -86,8 +86,17 @@ start_stop_instance() {
 
     while [[ "$current_state" != "$desired_state" ]]; do
         current_state=$(aws ec2 describe-instances --instance-ids "$instance_id" --query 'Reservations[*].Instances[*].State.Name' --output text)
-        echo -e "Instance \e[1m$instance_id\e[0m state is \e[1m$current_state\e[0m $current_state! ..." | sed -e 's/running!/🟢/g' -e 's/stopped!/🔴/g'
+        echo -e "Instance \e[1m$instance_id\e[0m state is \e[1m$current_state\e[0m $current_state! ..." | sed -e 's/running!/🟢/g' -e 's/stopped!/🔴/g' -e 's/pending!/🟡/g'
         sleep 5
     done
     [[ "$desired_state" == "running" ]] && echo "Instance $instance_id has started."
+    if [[ "$desired_state" == "running" ]]; then
+      instance_status="initializing"
+      while [ "instance_status" != "ok" ]
+      do
+          instance_status=$(aws ec2 describe-instance-status --instance-ids "$instance_id" --query 'InstanceStatuses[*].InstanceStatus.Status' --output text --no-cli-pager)
+          echo "Current instance status: \e[1m$instance_status\e[0m"
+          sleep 5
+      done
+    fi
 }
