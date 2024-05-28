@@ -92,7 +92,7 @@ start_stop_instance() {
     [[ "$desired_state" == "running" ]] && echo "Instance $instance_id has started."
     if [[ "$desired_state" == "running" ]]; then
       instance_status="initializing"
-      while [ "instance_status" != "ok" ]
+      while [ "$instance_status" != "ok" ]
       do
           instance_status=$(aws ec2 describe-instance-status --instance-ids "$instance_id" --query 'InstanceStatuses[*].InstanceStatus.Status' --output text --no-cli-pager)
           echo "Current instance status: \e[1m$instance_status\e[0m"
